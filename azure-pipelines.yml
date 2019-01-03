@@ -8,6 +8,8 @@ jobs:
   pool:
     vmImage: 'VS2017-Win2016'
   steps:
+  - checkout: self
+    submodules: true
   - template: azure-init.yml
   - template: azure-steps.yml
 
@@ -15,6 +17,8 @@ jobs:
   pool:
     vmImage: 'macOS-10.13'
   steps:
+  - checkout: self
+    submodules: true
   - template: azure-init.yml
   - template: azure-steps.yml
 
@@ -23,4 +27,6 @@ jobs:
     vmImage: 'Ubuntu-16.04'
   container: wpilib
   steps:
+  - checkout: self
+    submodules: true
   - template: azure-steps.yml
