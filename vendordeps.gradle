@@ -6,7 +6,7 @@ Map<String, Object> vendorJson() {
     fileName: "gainput.json",
     name: "gainput",
     version: project.version,
-    uuid: "",
+    uuid: "a7d3881c-d3ba-4952-a374-526577802300",
     mavenUrls: [
       "https://dev.imjac.in/maven/"
     ],
