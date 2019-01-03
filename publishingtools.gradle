@@ -26,7 +26,7 @@ model {
 
                 binaryPublishers[bin.component.name]?.each { entry -> 
                     entry.scope.artifact(zipTask) {
-                        classifier targetPlatform.name + (buildType.name == 'debug' ? 'debug' : '') + (shared ? '' : 'static')
+                        classifier targetPlatform.name + (shared ? '' : 'static') + (buildType.name == 'debug' ? 'debug' : '')
                     }
                 }
             }

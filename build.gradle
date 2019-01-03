@@ -2,6 +2,7 @@ plugins {
   id 'maven-publish'
   id "edu.wpi.first.GradleRIO" version "2019.1.1-rc-1"
   id 'cpp'
+  id 'objective-cpp'
   id 'base'
 }
 
@@ -17,11 +18,12 @@ model {
       targetPlatform wpi.platforms.desktop
 
       binaries.all {
-        sources{
-          gainput(CppSourceSet) {
+        def mac = targetPlatform.operatingSystem.isMacOsX()
+        sources {
+          gainput(mac ? ObjectiveCppSourceSet : CppSourceSet) {
             source {
               srcDir 'gainput/lib/source'
-              if (targetPlatform.operatingSystem.isMacOsX()) {
+              if (mac) {
                 include '**/*.cpp', '**/*.mm'
               } else {
                 include '**/*.cpp'
@@ -33,7 +35,7 @@ model {
           }
         }
 
-        if (targetPlatform.operatingSystem.isMacOsX()) {
+        if (mac) {
           linker.args << '-framework' << 'Foundation'
           linker.args << '-framework' << 'IOKit'
           linker.args << '-framework' << 'AppKit'
