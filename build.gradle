@@ -32,6 +32,15 @@ model {
             }
           }
         }
+
+        if (targetPlatform.operatingSystem.isMacOsX()) {
+          linker.args << '-framework' << 'Foundation'
+          linker.args << '-framework' << 'IOKit'
+          linker.args << '-framework' << 'AppKit'
+          linker.args << '-framework' << 'GameController'
+        } else if (targetPlatform.operatingSystem.isWindows()) {
+          linker.args << 'XINPUT9_1_0'
+        }
       }
     }
   }
