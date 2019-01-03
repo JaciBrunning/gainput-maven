@@ -12,9 +12,7 @@ jobs:
     submodules: true
   - template: azure-init.yml
   - script: |
-      cd build
-      cmake ..
-      make VERBOSE=1
+      cd build && cmake .. && make VERBOSE=1
   # - template: azure-steps.yml
 
 - job: macOS
