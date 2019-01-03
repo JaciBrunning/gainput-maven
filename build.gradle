@@ -1,0 +1,62 @@
+plugins {
+  id 'maven-publish'
+  id "edu.wpi.first.GradleRIO" version "2019.1.1-rc-1"
+  id 'cpp'
+  id 'base'
+}
+
+apply from: 'publishingtools.gradle'
+apply from: 'vendordeps.gradle'
+
+group = 'thirdparty.gainput'
+version = '1.0.0'
+
+model {
+  components {
+    gainput(NativeLibrarySpec) {
+      targetPlatform wpi.platforms.desktop
+
+      binaries.all {
+        sources{
+          gainput(CppSourceSet) {
+            source {
+              srcDir 'gainput/lib/source'
+              if (targetPlatform.operatingSystem.isMacOsX()) {
+                include '**/*.cpp', '**/*.mm'
+              } else {
+                include '**/*.cpp'
+              }
+            }
+            exportedHeaders {
+              srcDir 'gainput/lib/include'
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+task zipHeaders(type: Zip) {
+  from fileTree('gainput/lib/include')
+
+  classifier = 'headers'
+}
+
+publishing {
+  publications {
+    gainput(MavenPublication) {
+      artifactId "gainput"
+
+      artifact zipHeaders {
+          classifier 'headers'
+      }
+
+      binaryArtifacts(it, 'gainput')
+    }
+  }
+}
+
+wrapper {
+  gradleVersion = 5.0
+}

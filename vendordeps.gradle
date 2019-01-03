@@ -1,0 +1,75 @@
+
+import groovy.json.JsonOutput
+
+Map<String, Object> vendorJson() {
+  return [
+    fileName: "gainput.json",
+    name: "gainput",
+    version: project.version,
+    uuid: "",
+    mavenUrls: [
+      "https://dev.imjac.in/maven/"
+    ],
+    jsonUrl: "https://dev.imjac.in/maven/thirdparty/gainput/gainput-latest.json",
+    cppDependencies: [
+      [
+        groupId: project.group,
+        artifactId: 'gainput',
+        version: project.version,
+        libName: 'gainput',
+        configuration: "native_gainput",
+        headerClassifier: 'headers',
+        sharedLibrary: true,
+        skipInvalidPlatforms: true,
+        binaryPlatforms: [
+          "linuxx86-64",
+          "windowsx86-64",
+          "osxx86-64"
+        ]
+      ]
+    ],
+  ]
+}
+
+String vendorJsonString() {
+  return JsonOutput.prettyPrint(JsonOutput.toJson(vendorJson()))
+}
+
+task generateVendorDepsJson() {
+  def outfile = new File(buildDir, "gainput.json")
+  outputs.file(outfile)
+
+  doLast {
+    outfile.text = vendorJsonString()
+  }
+}
+
+publishing {
+  publications {
+    vendordeps(MavenPublication) {
+      artifactId "gainput-FRCDeps"
+      groupId 'thirdparty.gainput'
+
+      artifact(generateVendorDepsJson.outputs.files.files[0]) {
+        builtBy generateVendorDepsJson
+      }
+    }
+  }
+}
+
+afterEvaluate {
+  publishing.repositories.all {
+    def vendorTask = task "writeLatestVendorDepsTo${name}"() {
+      def outfile = new File(new File(url), "thirdparty/gainput/gainput-latest.json")
+      outputs.file(outfile)
+
+      doLast {
+        outfile.text = vendorJsonString()
+      }
+    }
+
+    tasks.withType(PublishToMavenRepository).all {
+      dependsOn vendorTask
+    }
+  }
+}
